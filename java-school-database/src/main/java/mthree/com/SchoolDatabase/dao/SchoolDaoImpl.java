@@ -1,10 +1,16 @@
 package mthree.com.SchoolDatabase.dao;
 
-import mthree.com.SchoolDatabase.model.*;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import java.util.List;
+
+import mthree.com.SchoolDatabase.model.Course;
+import mthree.com.SchoolDatabase.model.Student;
+import mthree.com.SchoolDatabase.model.StudentClassCount;
+import mthree.com.SchoolDatabase.model.Teacher;
+import mthree.com.SchoolDatabase.model.TeacherCount;
 
 @Repository
 public class SchoolDaoImpl implements SchoolDao {
@@ -36,7 +42,7 @@ public class SchoolDaoImpl implements SchoolDao {
         // sorted by last name.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "SELECT * FROM student ORDER BY lName;";
 
         // YOUR CODE ENDS HERE
 
@@ -49,7 +55,7 @@ public class SchoolDaoImpl implements SchoolDao {
         // for all courses in the Computer Science department.
         // YOUR CODE STARTS HERE
 
-         String sql = "";
+         String sql = "SELECT courseCode, courseDesc FROM course WHERE courseCode like 'CS%';";
 
         // YOUR CODE ENDS HERE
         return jdbcTemplate.query(sql, new CourseMapper());
@@ -61,7 +67,9 @@ public class SchoolDaoImpl implements SchoolDao {
         //  Name the aggregate field `teacherCount`.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "SELECT dept, COUNT(*) as teacherCount "
+                    +"FROM teacher "
+                    +"GROUP BY dept;";
 
         // YOUR CODE ENDS HERE
         return jdbcTemplate.query(sql, new TeacherCountMapper());
@@ -74,7 +82,10 @@ public class SchoolDaoImpl implements SchoolDao {
         // Name the aggregate field `numStudents`.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "SELECT c.courseCode, c.courseDesc, count(cs.student_id) as numStudents "
+                    +"FROM course c "
+                    +"JOIN course_student cs ON c.cid = cs.course_id "
+                    +"GROUP BY c.courseCode, c.courseDesc;";
 
         // YOUR CODE ENDS HERE
         return jdbcTemplate.query(sql, new StudentCountMapper());
@@ -88,7 +99,8 @@ public class SchoolDaoImpl implements SchoolDao {
         // Need to add in the sid for Robert Dylan.  Use sid: 123
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "INSERT INTO student (sid, fName, lName) "
+                    +"VALUES (123, 'Robert', 'Dylan')";
 
         // YOUR CODE ENDS HERE
          System.out.println(jdbcTemplate.update(sql));
@@ -101,7 +113,8 @@ public class SchoolDaoImpl implements SchoolDao {
         // You will need to include a sid in your query.  Use 123
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "INSERT INTO course_student (student_id, course_id) "
+                    +"VALUES (123, 1)";
 
         // YOUR CODE ENDS HERE
         jdbcTemplate.update(sql);
@@ -112,7 +125,9 @@ public class SchoolDaoImpl implements SchoolDao {
         // Write a query to change the course description for course CS305 to "Advanced Python with Flask".
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "UPDATE course "
+                    +"SET courseDesc = 'Advanced Python with Flask' "
+                    +"WHERE courseCode = 'CS305'";
 
         // YOUR CODE ENDS HERE
         jdbcTemplate.update(sql);
@@ -123,7 +138,9 @@ public class SchoolDaoImpl implements SchoolDao {
         // Write a query to remove David Mitchell as a teacher.
         // YOUR CODE STARTS HERE
 
-        String sql = "";
+        String sql = "DELETE FROM teacher\n"
+                    +"WHERE tFNAME = 'David'\n"
+                    +"AND tLNAME = 'Mitchell';";
 
         // YOUR CODE ENDS HERE
         jdbcTemplate.update(sql);
